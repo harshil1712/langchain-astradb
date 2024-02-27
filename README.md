@@ -1,6 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Custom AI Assistant
+
+Ask questions from your personal knowledgebase
 
 ## Getting Started
+
+### Prerequisites
+
+1. OpenAI API Key
+2. AstraDB credentials
+   - Access Token
+   - DataBase Endpoint
+
+### Clone the repo
+
+Run the following command to clone the repo
+
+```sh
+git clone https://github.com/harshil1712/langchain-astradb.git
+```
+
+### Install dependencies
+
+Navigate into the project directory and run the following command to install the required dependencies
+
+```sh
+npm run install
+```
+
+### Configure credentials
+
+Rename the `.env.example` file to `.env.local`. Add your credentials in the `.env.local` file.
+
+### Start Development Server
 
 First, run the development server:
 
@@ -16,21 +47,29 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Create Collection
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Create a [Severless Vector Database](https://docs.datastax.com/en/astra/astra-db-vector/databases/create-database.html#create-vector-database) if you don't already have one. Next, navigate to the `/api/createCollection`. This will create a new collection called `demo` in your database.
+
+### Ingest Data
+
+To create embeds and ingest the vectors, navigate to the `/api/ingestData` endpoint.
+
+This endpoint will use the content from `./data/blog` folder.
+
+### Try out!
+
+Navigate to the [homepage](https://localhost:3000). You can now ask questions to your assistant!
 
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
 
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- [AstraDB](https://docs.datastax.com/en/astra-serverless/docs/)
+- [Vercel AI SDK](https://sdk.vercel.ai/docs/getting-started)
+- [LangChain](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

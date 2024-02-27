@@ -4,24 +4,18 @@ export async function GET() {
 	const { ASTRA_DB_APPLICATION_TOKEN, ASTRA_DB_URL } = process.env;
 	const astraDb = new AstraDB(ASTRA_DB_APPLICATION_TOKEN, ASTRA_DB_URL);
 
-	// const isCollectionPresent = (await astraDb.collection('blog')) ? true : false;
-
-	// if (isCollectionPresent) {
-	// 	return Response.json({ message: 'Collection is already present' });
-	// }
-
 	try {
-		const { status } = await astraDb.createCollection('blog', {
+		const { status } = await astraDb.createCollection('demo', {
 			vector: {
 				dimension: 1536,
 				metric: 'cosine',
 			},
 		});
-		if (status.ok === 1) {
+		if (status && status.ok === 1) {
 			return Response.json({ message: 'Collection Created' });
 		}
-		return Response.json({ message: 'Collection already created' });
+		return Response.json({ message: 'An error occured' });
 	} catch (e) {
-		throw Error(e);
+		console.error(e);
 	}
 }

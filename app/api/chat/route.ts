@@ -25,7 +25,7 @@ const embeddings = new OpenAIEmbeddings({
 const astraConfig: AstraLibArgs = {
 	token: ASTRA_DB_APPLICATION_TOKEN as string,
 	endpoint: ASTRA_DB_URL as string,
-	collection: 'blog',
+	collection: 'demo',
 };
 
 const formatMessage = (message: VercelChatMessage) => {

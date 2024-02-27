@@ -5,43 +5,34 @@ import { OpenAIEmbeddings } from '@langchain/openai';
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import { AstraDB } from '@datastax/astra-db-ts';
 
+const { OPENAI_API_KEY, ASTRA_DB_APPLICATION_TOKEN, ASTRA_DB_URL } =
+	process.env;
+
+// Fetch content
+const POSTS_FOLDERS_PATH: string = path.join(process.cwd(), './data/blog');
+
+const POSTS_FOLDERS = fs
+	.readdirSync(POSTS_FOLDERS_PATH)
+	.filter((file) => !/\.tsx/.test(file));
+
+const mdxData = POSTS_FOLDERS.map((file) => {
+	const mdxFile = fs
+		.readdirSync(path.join(POSTS_FOLDERS_PATH, file))
+		.filter((mdx) => /\.md?$/.test(mdx))[0];
+	const mdxFilePath = path.join(POSTS_FOLDERS_PATH, file, mdxFile);
+	const content = fs.readFileSync(mdxFilePath, 'utf8');
+	const matter = grayMatter(content);
+	return matter.content;
+});
+
+// Splitting Text
+const splitter = new RecursiveCharacterTextSplitter({
+	chunkSize: 1000,
+	chunkOverlap: 200,
+	separators: [','],
+});
+
 export async function GET() {
-	const { OPENAI_API_KEY, ASTRA_DB_APPLICATION_TOKEN, ASTRA_DB_URL } =
-		process.env;
-	// Fetch content
-	const POSTS_FOLDERS_PATH: string = path.join(
-		process.cwd(),
-		'../harshil.dev/data/writings'
-	);
-
-	const POSTS_FOLDERS = fs
-		.readdirSync(POSTS_FOLDERS_PATH)
-		.filter((file) => !/\.tsx/.test(file));
-
-	const mdxData = POSTS_FOLDERS.map((file) => {
-		const mdxFile = fs
-			.readdirSync(path.join(POSTS_FOLDERS_PATH, file))
-			.filter((mdx) => /\.mdx?$/.test(mdx))[0];
-		const mdxFilePath = path.join(POSTS_FOLDERS_PATH, file, mdxFile);
-		const content = fs.readFileSync(mdxFilePath, 'utf8');
-		const matter = grayMatter(content);
-		// return {
-		// 	content: matter.content,
-		// 	metadata: {
-		// 		title: matter.data.title,
-		// 		url: `https://harshil.dev/writings/${matter.data.slug}`,
-		// 	},
-		// };
-		return matter.content;
-	});
-
-	// Splitting Text
-	const splitter = new RecursiveCharacterTextSplitter({
-		chunkSize: 1000,
-		chunkOverlap: 200,
-		separators: [','],
-	});
-
 	const docOutput = await splitter.createDocuments(mdxData);
 
 	let textArr: string[] = [];
@@ -72,10 +63,10 @@ export async function GET() {
 		})
 	);
 
-	// AstraDB
+	// Load embeddings in AstraDB
 	const astraDb = new AstraDB(ASTRA_DB_APPLICATION_TOKEN, ASTRA_DB_URL);
 
-	const collection = await astraDb.collection('blog');
+	const collection = await astraDb.collection('demo');
 	try {
 		const len = insertObj.length;
 		for (let i = 0; i <= len; i = i + 20) {
@@ -84,8 +75,7 @@ export async function GET() {
 			console.log(i, insertData);
 		}
 	} catch (e) {
-		return Response.error(e);
-		throw Error(e);
+		console.error(e);
 	}
 
 	return Response.json({ msg: 'Data loaded successfully!' });
