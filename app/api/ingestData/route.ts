@@ -72,7 +72,6 @@ export async function GET() {
 		for (let i = 0; i <= len; i = i + 20) {
 			let insertionData = insertObj.slice(i, i + 20);
 			const insertData = await collection.insertMany(insertionData);
-			console.log(i, insertData);
 		}
 	} catch (e) {
 		console.error(e);

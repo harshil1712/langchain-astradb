@@ -44,10 +44,6 @@ const systemPrompt = `You are my personal assistant. You help me with the questi
 
   AI:
   `;
-/**
- * Chat models stream message chunks rather than bytes, so this
- * output parser handles serialization and encoding.
- */
 
 export async function POST(req: Request) {
 	const { messages: userMessage } = await req.json();
